@@ -12,6 +12,7 @@ then
     exit
 fi
 
+echo "1" > /proc/sys/net/ipv4/ip_forward
 
 ip rule add fwmark 1 lookup 100 || { echo "Failed to add fwmark"; exit }
 ip route add local 0.0.0.0/0 dev lo table 100 || { echo "Failed to add local route"; exit }
