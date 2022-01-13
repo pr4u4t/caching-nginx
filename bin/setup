@@ -34,7 +34,13 @@ echo "Checking for cache/l1_cache directory"
 [ -d "$sdir/../cache/l1_cache" ] || mkdir -p "$sdir/../cache/l1_cache" || { echo "Failed to create directory: cache/l1_cache"; exit; }
 
 echo "Checking for cache/l2_cache directory"
-[ -d "$sdir/../cache/l2_cache" ] || mkdir -p "$sdir/../cache/l2_cache" || { echo "Failed to create directory: cache/l1_cache"; exit; }
+[ -d "$sdir/../cache/l2_cache" ] || mkdir -p "$sdir/../cache/l2_cache" || { echo "Failed to create directory: cache/l2_cache"; exit; }
+
+echo "Checking for temp/l1_temp directory"
+[ -d "$sdir/../temp/l1_temp" ] || mkdir -p "$sdir/../temp/l1_temp" || { echo "Failed to create directory: temp/l1_temp"; exit; }
+
+echo "Checking for temp/l2_temp directory"
+[ -d "$sdir/../temp/l2_temp" ] || mkdir -p "$sdir/../temp/l2_temp" || { echo "Failed to create directory: temp/l2_temp"; exit; }
 
 echo "Enabling ip_forward"
 echo "1" > /proc/sys/net/ipv4/ip_forward
