@@ -45,6 +45,9 @@ echo "Checking for temp/l2_temp directory"
 echo "Enabling ip_forward"
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
+echo "Enabling nonlocal_bind"
+echo "1" > /proc/sys/net/ipv4/ip_nonlocal_bind
+
 echo "Adding new route lookup table"
 ip rule add fwmark 1 lookup 100 || { echo "Failed to add route lookup table"; exit; }
 
