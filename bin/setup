@@ -28,19 +28,26 @@ then
 fi
 
 echo "Checking for logs directory"
-[ -d "$sdir/../logs" ] || mkdir "$sdir/../logs" || { echo "Failed to create directory logs"; exit; }
+[ -d "$sdir/../logs" ] && echo "logs directory exists" || mkdir "$sdir/../logs" || { echo "Failed to create directory logs"; exit; }
 
 echo "Checking for cache/l1_cache directory"
-[ -d "$sdir/../cache/l1_cache" ] || mkdir -p "$sdir/../cache/l1_cache" || { echo "Failed to create directory: cache/l1_cache"; exit; }
+[ -d "$sdir/../cache/l1_cache" ] && echo "cache/l1_cache directory exists" || mkdir -p "$sdir/../cache/l1_cache" || { echo "Failed to create directory: cache/l1_cache"; exit; }
 
 echo "Checking for cache/l2_cache directory"
-[ -d "$sdir/../cache/l2_cache" ] || mkdir -p "$sdir/../cache/l2_cache" || { echo "Failed to create directory: cache/l2_cache"; exit; }
+[ -d "$sdir/../cache/l2_cache" ] && echo "cache/l2_cache directory exists" || mkdir -p "$sdir/../cache/l2_cache" || { echo "Failed to create directory: cache/l2_cache"; exit; }
 
 echo "Checking for temp/l1_temp directory"
-[ -d "$sdir/../temp/l1_temp" ] || mkdir -p "$sdir/../temp/l1_temp" || { echo "Failed to create directory: temp/l1_temp"; exit; }
+[ -d "$sdir/../temp/l1_temp" ] && echo "temp/l1_temp directory exists" || mkdir -p "$sdir/../temp/l1_temp" || { echo "Failed to create directory: temp/l1_temp"; exit; }
 
 echo "Checking for temp/l2_temp directory"
-[ -d "$sdir/../temp/l2_temp" ] || mkdir -p "$sdir/../temp/l2_temp" || { echo "Failed to create directory: temp/l2_temp"; exit; }
+[ -d "$sdir/../temp/l2_temp" ] && echo "temp/l2_temp directory exists" || mkdir -p "$sdir/../temp/l2_temp" || { echo "Failed to create directory: temp/l2_temp"; exit; }
+
+nonlocal="$(cat "$sdir/../conf.d/vars.conf" | grep "\$nonlocal" | awk '{ print $3 }' | sed "s/;//g")"
+
+if [[ "$nonlocal" == 0 ]]; then
+	echo "setup complete"
+	exit
+fi
 
 echo "Enabling ip_forward"
 echo "1" > /proc/sys/net/ipv4/ip_forward
@@ -54,8 +61,8 @@ ip rule add fwmark 1 lookup 100 || { echo "Failed to add route lookup table"; ex
 echo "Adding local route to new table"
 ip route add local 0.0.0.0/0 dev lo table 100 || { echo "Failed to add local route"; exit; }
 
-l3tab=( $(cat "$sdir/../vars.conf" | grep l2_addr | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
-sesstab=( $(cat "$sdir/../vars.conf" | grep l2_addr | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
+l3tab=( $(cat "$sdir/../conf.d/vars.conf" | grep l2_addr | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
+sesstab=( $(cat "$sdir/../conf.d/vars.conf" | grep sess_rel | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
 
 l3addr=${l3tab[0]}
 l3port=${l3tab[1]}
