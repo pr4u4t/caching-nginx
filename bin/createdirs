@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+
+echo "Checking for logs directory"
+[ -d "$sdir/logs" ] && echo "$sdir/logs directory exists" || mkdir "$sdir/logs" || { echo "Failed to create directory logs"; exit; }
+
+echo "Checking for cache/l1_cache directory"
+[ -d "$sdir/cache/l1_cache" ] && echo "$sdir/cache/l1_cache directory exists" || mkdir -p "$sdir/cache/l1_cache" || { echo "Failed to create directory: cache/l1_cache"; exit; }
+
+echo "Checking for cache/l2_cache directory"
+[ -d "$sdir/cache/l2_cache" ] && echo "$sdir/cache/l2_cache directory exists" || mkdir -p "$sdir/cache/l2_cache" || { echo "Failed to create directory: cache/l2_cache"; exit; }
+
+echo "Checking for temp/l1_temp directory"
+[ -d "$sdir/temp/l1_temp" ] && echo "$sdir/temp/l1_temp directory exists" || mkdir -p "$sdir/temp/l1_temp" || { echo "Failed to create directory: temp/l1_temp"; exit; }
+
+echo "Checking for temp/l2_temp directory"
+[ -d "$sdir/temp/l2_temp" ] && echo "$sdir/temp/l2_temp directory exists" || mkdir -p "$sdir/temp/l2_temp" || { echo "Failed to create directory: temp/l2_temp"; exit; }
+
+echo "directory tree created"

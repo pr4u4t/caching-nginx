@@ -1,0 +1,58 @@
+#!/bin/bash
+
+echo "starting nginx caching proxy setup"
+
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+nonlocal="$(cat "$sdir/conf.d/vars.conf" | grep "\$nonlocal" | awk '{ print $3 }' | sed "s/;//g")"
+
+if [[ "$nonlocal" == 0 ]]; then
+	echo "setup complete"
+	exit
+fi
+
+if ! command -v ip &> /dev/null
+then
+    echo "command: ip could not be found"
+    exit
+fi
+
+if ! command -v iptables &> /dev/null
+then
+    echo "command: iptables could not be found"
+    exit
+fi
+
+echo "Enabling ip_forward"
+echo "1" > /proc/sys/net/ipv4/ip_forward
+
+echo "Enabling nonlocal_bind"
+echo "1" > /proc/sys/net/ipv4/ip_nonlocal_bind
+
+echo "Adding new route lookup table"
+ip rule add fwmark 1 lookup 100 || { echo "Failed to add route lookup table"; exit; }
+
+echo "Adding local route to new table"
+ip route add local 0.0.0.0/0 dev lo table 100 || { echo "Failed to add local route"; exit; }
+
+l3tab=( $(cat "$sdir/conf.d/vars.conf" | grep l2_addr | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
+sesstab=( $(cat "$sdir/conf.d/vars.conf" | grep sess_rel | awk '{ print $3 }' | sed "s/[';]//g" | awk 'BEGIN { FS = ":"} ; { print $1; print $2 }') )
+
+l3addr=${l3tab[0]}
+l3port=${l3tab[1]}
+
+[ -z "$l3addr" ] && { echo "Failed to obtain IP address of internal citrix https host"; exit; }
+[ -z "$l3port" ] && { echo "Failed to obtain port numberof internal citrix https host"; exit; }
+
+sessaddr=${sesstab[0]}
+sessport=${sesstab[1]}
+
+[ -z "$sessaddr" ] && { echo "Failed to obtain IP address of internal citrix session reliability host"; exit; }
+[ -z "$sessport" ] && { echo "Failed to obtain IP address of internal citrix session reliability host"; exit; }
+
+echo "Adding marking firewall rule for host: $sessaddr/32 port: $sessport"
+iptables -t mangle -A PREROUTING -p tcp -s "$sessaddr/32": --sport "$sessport" -j MARK --set-xmark 0x1/0xffffffff || { echo "Failed to add rule for port $sessport"; exit; }
+
+echo "Adding marking firewall rule for host: $l3addr/32 port: $l3port"
+iptables -t mangle -A PREROUTING -p tcp -s "$l3addr/32" --sport "$l3port"  -j MARK --set-xmark 0x1/0xffffffff || { echo "Failed to add rule for port $l3port"; exit; }
+
+echo "setup complete"
