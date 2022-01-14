@@ -18,9 +18,9 @@ Overview:
  - nginx.conf			main nginx configuration file
 
 Configuration:  
- conf.d/vars.conf:  
-  With your favourite editor open conf.d/vars.conf and adjust it to your needs  
-  Options:  
+  conf.d/vars.conf:  
+     With your favourite editor open conf.d/vars.conf and adjust it to your needs  
+     Options:  
 
 	- $l1_host  this variable stores http host header value that is set during L1 -> L2 proxy stage (string)
                     if empty host value would be taken from client request header
@@ -38,7 +38,8 @@ Configuration:
 	- $nonlocal  whether to enable nonlocal bind
 
  conf.d/ssl.conf:
-
+	With your favourite editor open conf.d/vars.conf and adjust it to your needs
+	Options:
 	- ssl_certificate      filesystem path pointing SSL/TLS public certificate in .pem format
 	
 	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
