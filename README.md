@@ -18,7 +18,9 @@ Overview:
  - nginx.conf			main nginx configuration file
 
 Configuration:
- conf.d/vars.conf
+
+ conf.d/vars.conf:
+
   With your favourite editor open conf.d/vars.conf and adjust it to your needs
   Options:
 
@@ -44,7 +46,9 @@ Configuration:
 	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
 
 Installation & configuration:
+
 You can choose from two installation methods 'manual' and 'automatic'
+
 I. Manual:
   1. cd YOUR_NGINX_CONF_DIRECTORY (probably /etc/nginx)
   2. git pull git@github.com:pr4u4t/caching-nginx.git (remember to set your ssh key on github)
