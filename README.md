@@ -1,26 +1,26 @@
-# caching-nginx
+### caching-nginx
 
-Overview:
- - bin:
-	- createdirs		create nginx necessary directories (temporary,cache,log)
- 	- execstartpre		setup operating system before nginx start
- - conf.d:
-	- cache.conf 		nginx cache zone definitions
- 	- error.conf		server error mappings to html/error/\*.html error pages
- 	- gzip.conf		compression settings if client supports gzip encoding output is compressed
- 	- http.conf		nginx http/https server configuration
- 	- l1.conf		front end server nginx locations configuration
- 	- l2.conf		back end server nginx locations configuration 
- 	- log.conf		log format settings, to get more verbose access.log
- 	- mime.types		file extensions to content-type mappings
- 	- ssl.conf		SSL/TLS public certificate and private key path 
- 	- status.conf		nginx location that displays server status
- 	- vars.conf		configuration variables this file should be edited by end user
- 	- error/\*.html 	server html error pages
- - nginx.conf			main nginx configuration file
+##Overview:
+ - #bin:
+	- createdirs:		create nginx necessary directories (temporary,cache,log)
+ 	- execstartpre:		setup operating system before nginx start
+ - #conf.d:
+	- cache.conf: 		nginx cache zone definitions
+ 	- error.conf:		server error mappings to html/error/\*.html error pages
+ 	- gzip.conf:		compression settings if client supports gzip encoding output is compressed
+ 	- http.conf:		nginx http/https server configuration
+ 	- l1.conf:		front end server nginx locations configuration
+ 	- l2.conf:		back end server nginx locations configuration 
+ 	- log.conf:		log format settings, to get more verbose access.log
+ 	- mime.types:		file extensions to content-type mappings
+ 	- ssl.conf:		SSL/TLS public certificate and private key path 
+ 	- status.conf:		nginx location that displays server status
+ 	- vars.conf:		configuration variables this file should be edited by end user
+ 	- error/\*.html: 	server html error pages
+ - #nginx.conf:			main nginx configuration file
 
-Configuration:  
-  conf.d/vars.conf:  
+##Configuration:  
+  #conf.d/vars.conf:  
      With your favourite editor open conf.d/vars.conf and adjust it to your needs  
      Options:  
 
@@ -39,7 +39,7 @@ Configuration:
 
 	- $nonlocal  whether to enable nonlocal bind
 
- conf.d/ssl.conf:  
+ #conf.d/ssl.conf:  
 	With your favourite editor open conf.d/vars.conf and adjust it to your needs
 	Options: 
  
@@ -47,9 +47,10 @@ Configuration:
 	
 	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
 
-Installation & configuration:  
+##Installation & configuration:  
 You can choose from two installation methods 'manual' and 'automatic'  
-I. Manual:
+
+#I. Manual:
   1. cd YOUR_NGINX_CONF_DIRECTORY (probably /etc/nginx)
   2. git pull git@github.com:pr4u4t/caching-nginx.git (remember to set your ssh key on github)
   3. set configuration variables in vars.conf if needed
@@ -59,7 +60,7 @@ I. Manual:
      this script should be added to nginx systemd service file in ExecStartPre
   7. systemctl start nginx
 
-II. Automatic
+#II. Automatic
   1. set SSL/TLS certificate path in conf.d/ssl.conf
   2. type ./install in source root directory
   3. systemctl start nginx
