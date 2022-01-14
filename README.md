@@ -21,25 +21,25 @@ Configuration:
  conf.d/vars.conf
   With your favourite editor open conf.d/vars.conf and adjust it to your needs
   Options:
-	$l1_host  - this variable stores http host header value that is set during L1 -> L2 proxy stage (string)
+	- $l1_host  this variable stores http host header value that is set during L1 -> L2 proxy stage (string)
                     if empty host value would be taken from client request header
 	
-	$l2_host  - this variable stores http host header value that is set during L2 -> internal_citrix_host proxy stage (string)
+	- $l2_host  this variable stores http host header value that is set during L2 -> internal_citrix_host proxy stage (string)
                     if empty host value would be taken from previous stage (L1)
 	
-	$l2_proto - this variable stores protocol on which connection should be made between l2 cache proxy and internal 
-		    citrix host (string) allowed values (http|https)
+	- $l2_proto  this variable stores protocol on which connection should be made between l2 cache proxy and internal 
+		     citrix host (string) allowed values (http|https)
 
-	$l2_addr  - this variable stores internal network citrix host http/https IP address and port (string) format (IP:PORT)
+	- $l2_addr   this variable stores internal network citrix host http/https IP address and port (string) format (IP:PORT)
 
-	$sess_rel - this variable stores internal network citrix host session reliability IP address and port (string) format (IP:PORT)
+	- $sess_rel  this variable stores internal network citrix host session reliability IP address and port (string) format (IP:PORT)
 
-	$nonlocal - whether to enable nonlocal bind
+	- $nonlocal  whether to enable nonlocal bind
 
  conf.d/ssl.conf:
-	ssl_certificate     - filesystem path pointing SSL/TLS public certificate in .pem format
+	- ssl_certificate      filesystem path pointing SSL/TLS public certificate in .pem format
 	
-	ssl_certificate_key - filesystem path pointing SSL/TLS private key in .pem format
+	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
 
 Installation & configuration:
 You can choose from two installation methods 'manual' and 'automatic'
@@ -56,6 +56,3 @@ II. Automatic
   1. set SSL/TLS certificate path in conf.d/ssl.conf
   2. type ./install in source root directory
   3. systemctl start nginx
-
-```
-```
