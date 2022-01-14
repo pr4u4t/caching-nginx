@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo '' > install.log
+
+service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+
+cp -rf {bin,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
+cp -f /usr/lib/systemd/system/nginx.service /etc/systemd/system &>> install.log
+
+ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
+
+sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
