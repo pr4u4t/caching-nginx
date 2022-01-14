@@ -17,12 +17,10 @@ Overview:
  - html/error/\*.html 		server html error pages
  - nginx.conf			main nginx configuration file
 
-Configuration:
-
- conf.d/vars.conf:
-
-  With your favourite editor open conf.d/vars.conf and adjust it to your needs
-  Options:
+Configuration:  
+ conf.d/vars.conf:  
+  With your favourite editor open conf.d/vars.conf and adjust it to your needs  
+  Options:  
 
 	- $l1_host  this variable stores http host header value that is set during L1 -> L2 proxy stage (string)
                     if empty host value would be taken from client request header
@@ -45,10 +43,8 @@ Configuration:
 	
 	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
 
-Installation & configuration:
-
-You can choose from two installation methods 'manual' and 'automatic'
-
+Installation & configuration:  
+You can choose from two installation methods 'manual' and 'automatic'  
 I. Manual:
   1. cd YOUR_NGINX_CONF_DIRECTORY (probably /etc/nginx)
   2. git pull git@github.com:pr4u4t/caching-nginx.git (remember to set your ssh key on github)
@@ -58,6 +54,7 @@ I. Manual:
   6. bin/execstartpre (this performs necessary operations to activate nonlocal bind if enabled in conf.d/vars.conf)
      this script should be added to nginx systemd service file in ExecStartPre
   7. systemctl start nginx
+
 II. Automatic
   1. set SSL/TLS certificate path in conf.d/ssl.conf
   2. type ./install in source root directory
