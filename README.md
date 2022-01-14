@@ -39,7 +39,8 @@ Configuration:
 
  conf.d/ssl.conf:  
 	With your favourite editor open conf.d/vars.conf and adjust it to your needs
-	Options:  
+	Options: 
+ 
 	- ssl_certificate      filesystem path pointing SSL/TLS public certificate in .pem format
 	
 	- ssl_certificate_key  filesystem path pointing SSL/TLS private key in .pem format
