@@ -2,12 +2,40 @@
 
 echo '' > install.log
 
-service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
-sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
+	echo "local service file: /etc/systemd/system does not exists"
+	echo "creating new local service file"
 
-cp -rf {bin,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
-cp -f /usr/lib/systemd/system/nginx.service /etc/systemd/system &>> install.log
+	service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
+	if [ -z "$service" ]; then
+		echo "Failed to obtain global nginx service file location"
+		exit 1
+	fi
 
-ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
+	sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+	if [ -z "$sdir" ]; then
+		echo "Failed to obtain nginx configuration directory"
+		exit 2
+	fi
 
-sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
+	if [ ! -w "$sdir" ]; then
+		echo "nginx configuration directory is not writeable by current user"
+		exit 3
+	fi
+
+	cp -rf {bin,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
+
+	if [ ! -w "/etc/systemd/system" ]; then
+		echo "local systemd directory is not writeable by current user"
+		exit 4
+	fi
+
+	cp -f "$service" /etc/systemd/system &>> install.log
+
+	if [ -z "$( cat /etc/systemd/system/nginx.service | grep ExecStartPre=/etc/nginx/bin/execstartpre" )" ]; then
+		ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
+		sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
+	fi
+else
+	echo "Already installed"
+fi
