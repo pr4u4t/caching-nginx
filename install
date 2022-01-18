@@ -36,6 +36,8 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 		ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
 		sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
 	fi
+
+	$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
 else
 	echo "Already installed"
 fi
