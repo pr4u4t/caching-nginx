@@ -1,5 +1,31 @@
 #!/bin/bash
 
+http_proxy_install(){
+	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
+}
+
+http_fastcgi_install(){
+-
+}
+
+citrix_install(){
+	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
+	ln -sf "../snippets/citrix-session.conf" "snippets-enabled/citrix-session.conf"
+}
+
+declare -A installators=( 
+	[proxy]=http_proxy_install
+	[fastcgi]=http_fastcgi_install
+	[citrix]=citrix_install
+)
+
+read -p "Performing new installation proceed [y/N]" -n 1 choose
+if [[ $choose =~ ^[Nn]*$ ]]
+then
+	echo "cowardly refusing to perform installation"
+	exit 1
+fi
+
 echo '' > install.log
 
 if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
@@ -9,25 +35,25 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 	service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
 	if [ -z "$service" ]; then
 		echo "Failed to obtain global nginx service file location"
-		exit 1
+		exit 2
 	fi
 
 	sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
 	if [ -z "$sdir" ]; then
 		echo "Failed to obtain nginx configuration directory"
-		exit 2
+		exit 3
 	fi
 
 	if [ ! -w "$sdir" ]; then
 		echo "nginx configuration directory is not writeable by current user"
-		exit 3
+		exit 4
 	fi
 
 	cp -rf {bin,backends-available,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
 
 	if [ ! -w "/etc/systemd/system" ]; then
 		echo "local systemd directory is not writeable by current user"
-		exit 4
+		exit 5
 	fi
 
 	cp -f "$service" /etc/systemd/system &>> install.log
@@ -38,7 +64,6 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 	fi
 
 	$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
-	backends=( $(ls -lh backends-available/ | awk '(NR > 1) { print $NF }' | awk -F'.' '{ print $1 }') )
 	
 	while :
 	do
