@@ -52,7 +52,9 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 		((i=i-1))
 		read -p "Please enter backend number from 1-$i: " selected
 		
-		if [ $selected -gt 0 ] && [ $selected -le $i ]; then
+		if [ $selected -ge 1 ] && [ $selected -le $i ]; then
+			((selected=selected-1))
+			ln -sf "../backends-available/${backends[$selected]}.conf" "conf.d/l2.conf"
 			break
 		else
 			echo "Invalid choice"
