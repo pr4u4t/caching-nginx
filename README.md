@@ -33,7 +33,7 @@
                     if empty host value would be taken from previous stage (L1)
 	
 	- $l2_proto  this variable stores protocol on which connection should be made between l2 cache proxy and internal 
-		     citrix host (string) allowed values (http|https)
+		     host (string) allowed values (http|https)
 
 	- $l2_addr   this variable stores internal network citrix host http/https IP address and port (string) format (IP:PORT)
 

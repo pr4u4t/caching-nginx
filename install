@@ -23,7 +23,7 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 		exit 3
 	fi
 
-	cp -rf {bin,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
+	cp -rf {bin,backends-available,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
 
 	if [ ! -w "/etc/systemd/system" ]; then
 		echo "local systemd directory is not writeable by current user"
