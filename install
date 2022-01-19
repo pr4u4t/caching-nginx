@@ -38,6 +38,26 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 	fi
 
 	$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
+	backends=( $(ls -lh backends-available/ | awk '(NR > 1) { print $NF }' | awk -F'.' '{ print $1 }') )
+	
+	while :
+	do
+		i=1
+		echo "Please select a backend:"
+		for backend in "${backends[@]}"
+		do
+			echo "$i) $backend"
+			((i=i+1))
+		done
+		((i=i-1))
+		read -p "Please enter backend number from 1-$i: " selected
+		
+		if [ $selected -gt 0 ] && [ $selected -le $i ]; then
+			break
+		else
+			echo "Invalid choice"
+		fi
+	done
 else
 	echo "Already installed"
 fi
