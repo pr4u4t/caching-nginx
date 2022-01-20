@@ -1,0 +1,9 @@
+#!/bin/bash
+
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+
+echo "Clearing cache/l1_cache directory"
+[ -d "$sdir/cache/l1_cache" ] && rm -rf "$sdir/cache/l1_cache/*"
+
+echo "Clearing cache/l2_cache directory"
+[ -d "$sdir/cache/l2_cache" ] && rm -rf "$sdir/cache/l2_cache/*"
