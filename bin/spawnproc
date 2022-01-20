@@ -6,10 +6,20 @@ then
 	exit 1
 fi
 
-if [ $# -ne 4 ]; then
-	echo "invalid number of arguments, should be:"
-	echo "$0 address port user group"
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+
+if [ -z "$sdir" ]; then
+	echo "could not find nginx configuration directory"
 	exit 2
 fi
 
-spawn-fcgi -a $1 -p $2 -n -u $3 -g $4 -C 16 -d /srv/http -- /usr/bin/php-cgi7 
+addr="$( cat "$sdir/conf.d/vars.conf" | grep -E "l2_addr" | awk '{ print $3 }' | sed "s/[;']//g" | awk -F':' '{ print $1}' )"
+port="$( cat "$sdir/conf.d/vars.conf" | grep -E "l2_addr" | awk '{ print $3 }' | sed "s/[;']//g" | awk -F':' '{ print $2}' )"
+usergroup="$( cat "$sdir/nginx.conf" | grep user | awk '{ print $2 }' | sed "s/;//"  )"
+
+if [ -z "$addr" ] || [ -z "$port" ] || [ -z "$usergroup" ]; then
+	echo "one of configuration variables id not set"
+	exit 3
+fi
+
+spawn-fcgi -a $addr -p $port -n -u $usergroup -g $usergroup -C 16 -d /srv/http -- /usr/bin/php-cgi7
