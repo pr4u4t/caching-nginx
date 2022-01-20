@@ -1,0 +1,11 @@
+[Unit]
+Description=Spawn FCGI php7 process 
+After=network.target network-online.target nss-lookup.target
+
+[Service]
+Type=simple
+SyslogLevel=err
+ExecStart=/etc/nginx/bin/spawnproc 127.0.0.1 1025 www-data www-data
+
+[Install]
+WantedBy=multi-user.target

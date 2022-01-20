@@ -3,12 +3,13 @@
 if ! command -v spawn-fcgi &> /dev/null
 then
 	echo "spawn-fcgi command could not be found"
-	exit
+	exit 1
 fi
 
 if [ $# -ne 4 ]; then
 	echo "invalid number of arguments, should be:"
 	echo "$0 address port user group"
+	exit 2
 fi
 
-spawn-fcgi -a $1 -p $2 -n -u $3 -g $4 
+spawn-fcgi -a $1 -p $2 -n -u $3 -g $4 -C 16 -d /srv/http -- /usr/bin/php-cgi7 
