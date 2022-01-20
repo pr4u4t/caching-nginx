@@ -36,9 +36,6 @@ fi
 echo ""
 #echo '' > install.log
 
-echo "local service file: /etc/systemd/system does not exists"
-echo "creating new local service file"
-
 service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
 if [ -z "$service" ]; then
 	echo "Failed to obtain global nginx service file location"
