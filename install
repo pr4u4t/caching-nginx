@@ -2,21 +2,21 @@
 
 http_proxy_install(){
 	echo "Performing http proxy installation"
-	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
+	ln -sf "$1/backends-available/proxy.conf" "$1/conf.d/l2.conf"
 	return 0
 }
 
 http_fastcgi_install(){
 	echo "Performing fastcgi installation"
-	ln -sf "../backends-available/fastcgi.conf" "conf.d/l2.conf"
+	ln -sf "$1/backends-available/fastcgi.conf" "$1/conf.d/l2.conf"
 	cp contrib/phpfcgi.service /etc/systemd/system/phpfcgi.service
 	return 0
 }
 
 citrix_install(){
 	echo "Performing citrix installation"
-	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
-	ln -sf "../snippets/citrix-session.conf" "snippets-enabled/citrix-session.conf"
+	ln -sf "$1/backends-available/proxy.conf" "$1/conf.d/l2.conf"
+	ln -sf "$1/snippets/citrix-session.conf" "$1/snippets-enabled/citrix-session.conf"
 	return 0
 }
 
@@ -84,7 +84,7 @@ do
 		
 	if [ $selected -ge 1 ] && [ $selected -le $i ]; then
 		((selected=selected-1))
-		${installers[${instkeys[$selected]}]}
+		${installers[${instkeys[$selected]}]} $sdir
 		break
 	else
 		echo "Invalid choice"
