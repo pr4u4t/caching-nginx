@@ -5,6 +5,7 @@
  - **bin:**
 	- createdirs:		create nginx necessary directories (temporary,cache,log)
  	- execstartpre:		setup operating system before nginx start
+	- clearcache:		clear nginx cache 
  - **conf.d:**
 	- cache.conf: 		nginx cache zone definitions
  	- error.conf:		server error mappings to html/error/\*.html error pages
@@ -18,7 +19,7 @@
  	- status.conf:		nginx location that displays server status
  	- vars.conf:		configuration variables this file should be edited by end user
  	- error/\*.html: 	server html error pages
- - nginx.conf:			main nginx configuration file
+ - **nginx.conf:**		main nginx configuration file
 
 ## Configuration:  
   
