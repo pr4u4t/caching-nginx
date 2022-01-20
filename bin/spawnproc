@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if ! command -v spawn-fcgi &> /dev/null
+then
+	echo "spawn-fcgi command could not be found"
+	exit
+fi
+
+if [ $# -ne 4 ]; then
+	echo "invalid number of arguments, should be:"
+	echo "$0 address port user group"
+fi
+
+spawn-fcgi -a $1 -p $2 -n -u $3 -g $4 
