@@ -1,31 +1,37 @@
 #!/bin/bash
 
 http_proxy_install(){
+	echo "Performing http proxy installation"
 	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
+	return 0
 }
 
 http_fastcgi_install(){
--
+	echo "Performing fastcgi installation"
+	return 0
 }
 
 citrix_install(){
+	echo "Performing citrix installation"
 	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
 	ln -sf "../snippets/citrix-session.conf" "snippets-enabled/citrix-session.conf"
+	return 0
 }
 
-declare -A installators=( 
+declare -A installers=( 
 	[proxy]=http_proxy_install
 	[fastcgi]=http_fastcgi_install
 	[citrix]=citrix_install
 )
 
-read -p "Performing new installation proceed [y/N]" -n 1 choose
+read -p "Performing new installation proceed [y/N] " -n 1 choose
 if [[ $choose =~ ^[Nn]*$ ]]
 then
 	echo "cowardly refusing to perform installation"
 	exit 1
 fi
 
+echo ""
 echo '' > install.log
 
 if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
@@ -64,12 +70,13 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 	fi
 
 	$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
-	
+	instkeys=( ${!installers[@]} )
+
 	while :
 	do
 		i=1
 		echo "Please select a backend:"
-		for backend in "${backends[@]}"
+		for backend in "${!installers[@]}"
 		do
 			echo "$i) $backend"
 			((i=i+1))
@@ -79,7 +86,8 @@ if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
 		
 		if [ $selected -ge 1 ] && [ $selected -le $i ]; then
 			((selected=selected-1))
-			ln -sf "../backends-available/${backends[$selected]}.conf" "conf.d/l2.conf"
+			func="$( ${installers[${instkeys[$selected]}]} )"
+			func
 			break
 		else
 			echo "Invalid choice"
