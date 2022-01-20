@@ -8,7 +8,7 @@ http_proxy_install(){
 
 http_fastcgi_install(){
 	echo "Performing fastcgi installation"
-	ln -sf "../backends-available/proxy.conf" "conf.d/l2.conf"
+	ln -sf "../backends-available/fastcgi.conf" "conf.d/l2.conf"
 	cp contrib/phpfcgi.service /etc/systemd/system/phpfcgi.service
 	return 0
 }
@@ -67,7 +67,7 @@ if [ -z "$( cat /etc/systemd/system/nginx.service | grep ExecStartPre=/etc/nginx
 	sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
 fi
 
-$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
+$sdir/bin/createdirs &>> install.log || { echo "Failed to create nginx runtime directories"; exit 5; }
 instkeys=( ${!installers[@]} )
 
 while :
@@ -84,8 +84,7 @@ do
 		
 	if [ $selected -ge 1 ] && [ $selected -le $i ]; then
 		((selected=selected-1))
-		func="$( ${installers[${instkeys[$selected]}]} )"
-		func
+		${installers[${instkeys[$selected]}]}
 		break
 	else
 		echo "Invalid choice"
