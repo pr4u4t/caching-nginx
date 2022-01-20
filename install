@@ -36,65 +36,61 @@ fi
 echo ""
 #echo '' > install.log
 
-if [[ ! -f "/etc/systemd/system/nginx.service" ]]; then
-	echo "local service file: /etc/systemd/system does not exists"
-	echo "creating new local service file"
+echo "local service file: /etc/systemd/system does not exists"
+echo "creating new local service file"
 
-	service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
-	if [ -z "$service" ]; then
-		echo "Failed to obtain global nginx service file location"
-		exit 2
-	fi
-
-	sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
-	if [ -z "$sdir" ]; then
-		echo "Failed to obtain nginx configuration directory"
-		exit 3
-	fi
-
-	if [ ! -w "$sdir" ]; then
-		echo "nginx configuration directory is not writeable by current user"
-		exit 4
-	fi
-
-	cp -rf {bin,backends-available,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
-
-	if [ ! -w "/etc/systemd/system" ]; then
-		echo "local systemd directory is not writeable by current user"
-		exit 5
-	fi
-
-	cp -f "$service" /etc/systemd/system &>> install.log
-
-	if [ -z "$( cat /etc/systemd/system/nginx.service | grep ExecStartPre=/etc/nginx/bin/execstartpre" )" ]; then
-		ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
-		sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
-	fi
-
-	$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
-	instkeys=( ${!installers[@]} )
-
-	while :
-	do
-		i=1
-		echo "Please select a backend:"
-		for backend in "${!installers[@]}"
-		do
-			echo "$i) $backend"
-			((i=i+1))
-		done
-		((i=i-1))
-		read -p "Please enter backend number from 1-$i: " selected
-		
-		if [ $selected -ge 1 ] && [ $selected -le $i ]; then
-			((selected=selected-1))
-			func="$( ${installers[${instkeys[$selected]}]} )"
-			func
-			break
-		else
-			echo "Invalid choice"
-		fi
-	done
-else
-	echo "Already installed"
+service="$( systemctl status nginx | grep Loaded | awk '{ print $3 }' | sed -E "s/^[(]//" | sed -E "s/;$//" )"
+if [ -z "$service" ]; then
+	echo "Failed to obtain global nginx service file location"
+	exit 2
 fi
+
+sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+if [ -z "$sdir" ]; then
+	echo "Failed to obtain nginx configuration directory"
+	exit 3
+fi
+
+if [ ! -w "$sdir" ]; then
+	echo "nginx configuration directory is not writeable by current user"
+	exit 4
+fi
+
+cp -rf {bin,backends-available,conf.d,html,nginx.conf,README.md} $sdir &>> install.log
+
+if [ ! -w "/etc/systemd/system" ]; then
+	echo "local systemd directory is not writeable by current user"
+	exit 5
+fi
+
+cp -f "$service" /etc/systemd/system &>> install.log
+
+if [ -z "$( cat /etc/systemd/system/nginx.service | grep ExecStartPre=/etc/nginx/bin/execstartpre )" ]; then
+	ln="$( cat /usr/lib/systemd/system/nginx.service | grep -nE "ExecStart" | grep -Eo "^[0-9]+" )"
+	sed -i "${ln}i ExecStartPre=/etc/nginx/bin/execstartpre" /etc/systemd/system/nginx.service &>> install.log
+fi
+
+$sdir/bin/createdirs || { echo "Failed to create nginx runtime directories"; exit 5; }
+instkeys=( ${!installers[@]} )
+
+while :
+do
+	i=1
+	echo "Please select a backend:"
+	for backend in "${!installers[@]}"
+	do
+		echo "$i) $backend"
+		((i=i+1))
+	done
+	((i=i-1))
+	read -p "Please enter backend number from 1-$i: " selected
+		
+	if [ $selected -ge 1 ] && [ $selected -le $i ]; then
+		((selected=selected-1))
+		func="$( ${installers[${instkeys[$selected]}]} )"
+		func
+		break
+	else
+		echo "Invalid choice"
+	fi
+done
