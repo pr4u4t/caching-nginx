@@ -42,10 +42,12 @@ if [ -z "$service" ]; then
 	exit 2
 fi
 
-sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+sdir="$( nginx -V |& grep -Eo "conf-path=[^ ]+" | sed "s/conf-path=//" | awk 'BEGIN{FS=OFS="/"}{NF--; print}' )"
 if [ -z "$sdir" ]; then
 	echo "Failed to obtain nginx configuration directory"
 	exit 3
+else
+	echo "Configuration would be installed in $sdir"
 fi
 
 if [ ! -w "$sdir" ]; then
