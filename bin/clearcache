@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+sdir="$( nginx -V |& grep -Eo "conf-path=[^ ]+" | sed "s/conf-path=//" | awk 'BEGIN{FS=OFS="/"}{NF--; print}' )"
 
 echo "Clearing cache/l1_cache directory"
 [ -d "$sdir/cache/l1_cache" ] && rm -rf "$sdir/cache/l1_cache/*"

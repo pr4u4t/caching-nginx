@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+sdir="$( nginx -V |& grep -Eo "conf-path=[^ ]+" | sed "s/conf-path=//" | awk 'BEGIN{FS=OFS="/"}{NF--; print}' )"
 
 echo "Checking for logs directory"
 [ -d "$sdir/logs" ] && echo "$sdir/logs directory exists" || mkdir "$sdir/logs" || { echo "Failed to create directory logs"; exit; }

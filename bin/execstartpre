@@ -2,7 +2,7 @@
 
 echo "starting nginx caching proxy setup"
 
-sdir="$( nginx -V |& grep -Eo "prefix=[^ ]+" | sed "s/prefix=//" )"
+sdir="$( nginx -V |& grep -Eo "conf-path=[^ ]+" | sed "s/conf-path=//" | awk 'BEGIN{FS=OFS="/"}{NF--; print}' )"
 nonlocal="$(cat "$sdir/conf.d/vars.conf" | grep "\$nonlocal" | awk '{ print $3 }' | sed "s/;//g")"
 
 if [[ "$nonlocal" == 0 ]]; then
