@@ -92,3 +92,24 @@ do
 		echo "Invalid choice"
 	fi
 done
+
+read -p "Enable cache purge module [y/N] " -n 1 choose
+if [[ $choose =~ ^[Nn]*$ ]]
+then
+        exit 0
+fi
+
+echo "adding nginx cache purge module"
+if [[ ! -d /usr/share/nginx/modules-available ]]; then
+	mkdir -p /usr/share/nginx/modules-available || { echo "failed to create nginx/modules-available directory"; exit 6; }
+fi
+
+if [[ ! -f /usr/share/nginx/modules-available/mod-http-cache-purge.conf ]]; then
+	echo "load_module modules/ngx_http_cache_purge_module.so;" > /usr/share/nginx/modules-available/mod-http-cache-purge.conf || { echo "failed to create cache purge configuration file"; exit 7; }
+fi
+
+if [[ ! -d /usr/share/nginx/modules-enabled ]]; then
+	mkdir /usr/share/nginx/modules-enabled || { echo "failed to create nginx/modules-enabled directory"; exit 8; }
+fi
+
+
